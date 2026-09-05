@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block title %}Submit Feedback{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="hero-card p-4 p-md-5 mb-4">
+      <span class="badge text-bg-primary mb-3">Online Feedback System</span>
+      <h1 class="display-6 fw-bold">We value your feedback.</h1>
+      <p class="lead text-muted">Share your experience and help us improve our services.</p>
+    </div>
+
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4 p-md-5">
+        <form method="POST" action="{{ url_for('submit_feedback') }}" onsubmit="return validateForm()">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Name</label>
+              <input class="form-control" name="name" required maxlength="100">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Email</label>
+              <input class="form-control" type="email" name="email" required maxlength="150">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Rating</label>
+              <div class="rating-group">
+                {% for r in range(1,6) %}
+                  <input type="radio" id="r{{r}}" name="rating" value="{{r}}" required>
+                  <label for="r{{r}}">{{r}} ★</label>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Comments</label>
+              <textarea class="form-control" name="comments" rows="5" required maxlength="1000" placeholder="Tell us about your experience..."></textarea>
+            </div>
+            <div class="col-12">
+              <button class="btn btn-primary btn-lg w-100" type="submit">Submit Feedback</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

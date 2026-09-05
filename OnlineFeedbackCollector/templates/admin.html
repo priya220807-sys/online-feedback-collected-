@@ -1,0 +1,74 @@
+{% extends "layout.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+  <div>
+    <h1 class="fw-bold mb-1">Admin Dashboard</h1>
+    <p class="text-muted mb-0">Feedback overview and analytics</p>
+  </div>
+  <a class="btn btn-success mt-2" href="{{ url_for('export_csv') }}">Export CSV</a>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-4"><div class="stat-card"><span>Total Feedback</span><strong>{{ total }}</strong></div></div>
+  <div class="col-md-4"><div class="stat-card"><span>Average Rating</span><strong>{{ average }}/5</strong></div></div>
+  <div class="col-md-4"><div class="stat-card"><span>Highest Rating</span><strong>5 ★</strong></div></div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-lg-5">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="fw-bold">Rating Distribution</h5>
+        <canvas id="ratingChart"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-7">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="fw-bold">Quick Insights</h5>
+        <ul class="list-group list-group-flush mt-2">
+          <li class="list-group-item d-flex justify-content-between">5-star responses <span class="badge text-bg-success">{{ distribution[4] }}</span></li>
+          <li class="list-group-item d-flex justify-content-between">4-star responses <span class="badge text-bg-primary">{{ distribution[3] }}</span></li>
+          <li class="list-group-item d-flex justify-content-between">3-star responses <span class="badge text-bg-warning">{{ distribution[2] }}</span></li>
+          <li class="list-group-item d-flex justify-content-between">2-star responses <span class="badge text-bg-secondary">{{ distribution[1] }}</span></li>
+          <li class="list-group-item d-flex justify-content-between">1-star responses <span class="badge text-bg-danger">{{ distribution[0] }}</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body">
+    <h5 class="fw-bold mb-3">All Feedback</h5>
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead><tr><th>#</th><th>Name</th><th>Email</th><th>Rating</th><th>Comments</th><th>Date</th></tr></thead>
+        <tbody>
+        {% for item in feedback %}
+          <tr>
+            <td>{{ item.id }}</td><td>{{ item.name }}</td><td>{{ item.email }}</td>
+            <td>{{ item.rating }} ★</td><td>{{ item.comments }}</td><td>{{ item.date_submitted }}</td>
+          </tr>
+        {% else %}
+          <tr><td colspan="6" class="text-center text-muted py-4">No feedback submitted yet.</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+const values = {{ distribution|tojson }};
+new Chart(document.getElementById('ratingChart'), {
+  type: 'bar',
+  data: { labels: ['1 Star','2 Stars','3 Stars','4 Stars','5 Stars'],
+          datasets: [{ label: 'Responses', data: values }] },
+  options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+});
+</script>
+{% endblock %}
